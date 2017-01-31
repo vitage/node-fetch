@@ -77,6 +77,7 @@ export default class Request extends Body {
 			input.compress : true;
 		this.counter = init.counter || input.counter || 0;
 		this.agent = init.agent || input.agent;
+		this.localAddress = init.localAddress || input.localAddress;
 
 		this[PARSED_URL] = parsedURL;
 		Object.defineProperty(this, Symbol.toStringTag, {
@@ -152,9 +153,13 @@ export function getNodeRequestOptions(request) {
 	// HTTP-network fetch step 4
 	// chunked encoding is handled by Node.js
 
-	return Object.assign({}, request[PARSED_URL], {
+	let result = Object.assign({}, request[PARSED_URL], {
 		method: request.method,
 		headers: headers.raw(),
 		agent: request.agent
 	});
+
+	if (request.localAddress) result.localAddress = request.localAddress
+
+	return result;
 }
